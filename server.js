@@ -9,7 +9,9 @@ const placeRoutes = require('./placeRoutes'); // 1. Import route mới ở đây
 
 const app = express();
 app.use(cors({
-  origin: "*" // Cho phép Frontend của bạn gọi tới
+  origin: "*", // Hoặc điền link frontend của bạn vào đây
+  methods: ["GET", "POST", "PUT", "DELETE"],
+  credentials: true
 }));
 app.use(express.json());
 
