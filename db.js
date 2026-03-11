@@ -1,19 +1,14 @@
-    const mysql = require('mysql2');
-    require('dotenv').config();
+const mysql = require('mysql2');
+require('dotenv').config();
 
-    // Tạo pool kết nối để tối ưu hiệu suất
-    const pool = mysql.createPool({
-    host: process.env.DB_HOST,
-    user: process.env.DB_USER,
-    password: process.env.DB_PASSWORD,
-    database: process.env.DB_NAME,
-    port: process.env.DB_PORT || 25363, // Thêm cổng của bạn vào đây
-    ssl: {
-        rejectUnauthorized: false // Bắt buộc phải có để kết nối tới Aiven/Cloud DB
-    },
-    waitForConnections: true,
-    connectionLimit: 10,
-    queueLimit: 0
-    });
+const pool = mysql.createPool({
+  // Thêm giá trị mặc định vào sau dấu || để test nhanh
+  host: process.env.DB_HOST, 
+  user: process.env.DB_USER || 'avnadmin',
+  password: process.env.DB_PASSWORD,
+  database: process.env.DB_NAME || 'defaultdb',
+  port: process.env.DB_PORT || 25363,
+  ssl: { rejectUnauthorized: false }
+});
 
-    module.exports = pool.promise();
+module.exports = pool.promise();
