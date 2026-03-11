@@ -1,0 +1,25 @@
+# Các thư mục cài đặt (Rất nặng, không được đẩy lên)
+node_modules/
+dist/
+build/
+
+# File chứa mật khẩu, API Key (CỰC KỲ QUAN trọng)
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# Các file nhật ký (Logs)
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+logs/
+*.log
+
+# File hệ thống (Rác của Windows/Mac)
+.DS_Store
+Thumbs.db
+
+# Thư mục chứa ảnh tạm thời (nếu bạn lưu local trước khi lên Cloudinary)
+public/uploads/
