@@ -8,7 +8,9 @@ const photoRoutes = require('./photoRoutes');
 const placeRoutes = require('./placeRoutes'); // 1. Import route mới ở đây
 
 const app = express();
-app.use(cors());
+app.use(cors({
+  origin: "*" // Cho phép Frontend của bạn gọi tới
+}));
 app.use(express.json());
 
 // Sử dụng Routes
