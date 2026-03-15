@@ -25,7 +25,7 @@ app.use(express.urlencoded({ extended: true, limit: "20mb" }));
 app.use('/api/memories', memoryRoutes);
 app.use('/api/photos', photoRoutes);
 app.use('/api/places', placeRoutes);
-app.use('/api/login',placeRoutes);
+app.use('/api/auth',login);
 
 // test server
 app.get('/', (req,res)=>{

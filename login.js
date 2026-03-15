@@ -1,74 +1,42 @@
-const express = require("express");
-const mysql = require("mysql2");
-const cors = require("cors");
+const express = require('express');
+const router = express.Router();
+const db = require('./db');
 
-const app = express();
+// Route Đăng nhập
+router.post('/login', async (req, res) => {
+    try {
+        const { username, password } = req.body;
 
-app.use(cors());
-app.use(express.json());
+        // Kiểm tra dữ liệu đầu vào
+        if (!username || !password) {
+            return res.status(400).json({ error: "Vui lòng nhập tài khoản và mật khẩu!" });
+        }
 
-// KẾT NỐI DATABASE
-const db = mysql.createConnection({
-    host: "localhost",
-    user: "root",
-    password: "",
-    database: "love_project",
-    port: 3306
-});
+        // Truy vấn khớp chính xác bảng 'users' của bạn
+        const sql = 'SELECT id, username, role, email FROM users WHERE username = ? AND password = ?';
+        const [rows] = await db.query(sql, [username, password]);
 
-db.connect((err) => {
-    if (err) {
-        console.log("Lỗi kết nối MySQL:", err);
-    } else {
-        console.log("Đã kết nối MySQL");
+        if (rows.length > 0) {
+            const user = rows[0];
+            
+            // Trả về thông tin user (Bạn có thể dùng JWT ở đây nếu muốn bảo mật hơn)
+            res.json({ 
+                success: true, 
+                message: "Đăng nhập thành công!",
+                user: {
+                    id: user.id,
+                    username: user.username,
+                    role: user.role, // Trả về 'admin' hoặc 'user' theo DB của bạn
+                    email: user.email
+                }
+            });
+        } else {
+            res.status(401).json({ error: "Tài khoản hoặc mật khẩu không đúng!" });
+        }
+    } catch (err) {
+        console.error("🔥 Lỗi Đăng nhập:", err);
+        res.status(500).json({ error: "Lỗi hệ thống", details: err.message });
     }
 });
 
-
-// API LOGIN
-app.post("/api/login", (req, res) => {
-
-    const { username, password } = req.body;
-
-    const sql = "SELECT * FROM users WHERE username = ? AND password = ?";
-
-    db.query(sql, [username, password], (err, result) => {
-
-        if (err) {
-            console.log(err);
-            return res.status(500).json({
-                success: false,
-                message: "Lỗi server"
-            });
-        }
-
-        if (result.length === 0) {
-            return res.json({
-                success: false,
-                message: "Sai tài khoản hoặc mật khẩu"
-            });
-        }
-
-        const user = result[0];
-
-        res.json({
-            success: true,
-            user: {
-                id: user.id,
-                username: user.username,
-                role: user.role,
-                email: user.email
-            }
-        });
-
-    });
-
-});
-
-
-// SERVER
-const PORT = 3000;
-
-app.listen(PORT, () => {
-    console.log("Server chạy tại http://localhost:" + PORT);
-});
+module.exports = router;
