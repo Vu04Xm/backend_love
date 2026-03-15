@@ -9,51 +9,43 @@ const placeRoutes = require('./placeRoutes');
 
 const app = express();
 
-// 1. Cấu hình CORS chi tiết hơn để tránh lỗi khi CRUD trên Render
+// CORS
 app.use(cors({
-  origin: "*", // Khi deploy thật, nên thay "*" bằng link frontend của bạn
-  methods: ["GET", "POST", "PUT", "DELETE"],
-  allowedHeaders: ["Content-Type", "Authorization"],
-  credentials: true
+  origin: "*",
+  methods: ["GET","POST","PUT","DELETE"],
+  allowedHeaders: ["Content-Type","Authorization"]
 }));
 
-// 2. Middleware xử lý dữ liệu (Quan trọng: Đặt trước Routes)
-app.use(express.json({ limit: "10mb" }));
-app.use(express.urlencoded({ extended: true, limit: "10mb" }));
+// QUAN TRỌNG: tăng limit upload
+app.use(express.json({ limit: "20mb" }));
+app.use(express.urlencoded({ extended: true, limit: "20mb" }));
 
-// 3. Sử dụng Routes
+// ROUTES
 app.use('/api/memories', memoryRoutes);
 app.use('/api/photos', photoRoutes);
 app.use('/api/places', placeRoutes);
 
-// API Đăng nhập
-app.post('/api/login', async (req, res) => {
-  const { username, password } = req.body;
-  try {
-    const [rows] = await db.query('SELECT id, username, password, role FROM users WHERE username = ?', [username]);
-    
-    // Lưu ý: Trong thực tế nên dùng bcrypt để hash password, hiện tại bạn dùng text thuần
-    if (rows.length === 0 || password !== rows[0].password) {
-      return res.status(401).json({ success: false, message: "Sai tài khoản hoặc mật khẩu!" });
-    }
-    
-    // Không nên trả về password về frontend
-    const { password: _, ...userWithoutPassword } = rows[0];
-    res.json({ success: true, user: userWithoutPassword });
-  } catch (err) {
-    res.status(500).json({ error: "Lỗi hệ thống khi đăng nhập" });
-  }
+// test server
+app.get('/', (req,res)=>{
+  res.send("Server running 🚀");
 });
 
-app.get('/', (req, res) => {
-  res.send('Server đang hoạt động bình thường! 🚀');
-});
-
-// 4. Xử lý lỗi tập trung (Giúp bạn debug nhanh hơn)
+// middleware bắt lỗi chi tiết
 app.use((err, req, res, next) => {
-  console.error("🔥 Lỗi Server:", err.stack);
-  res.status(500).json({ error: "Có lỗi xảy ra trên server!" });
+
+  console.error("🔥 SERVER ERROR FULL:", err);
+
+  res.status(500).json({
+    success:false,
+    message:"Server error",
+    error: err.message,
+    stack: err.stack
+  });
+
 });
 
 const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => console.log(`🚀 Server chạy tại port ${PORT}`));
+
+app.listen(PORT, ()=>{
+  console.log("🚀 Server running on port:", PORT);
+});
