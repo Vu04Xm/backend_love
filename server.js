@@ -6,6 +6,7 @@ const db = require('./db');
 const memoryRoutes = require('./memoryRoutes');
 const photoRoutes = require('./photoRoutes');
 const placeRoutes = require('./placeRoutes');
+const login=require('./login');
 
 const app = express();
 
@@ -24,6 +25,7 @@ app.use(express.urlencoded({ extended: true, limit: "20mb" }));
 app.use('/api/memories', memoryRoutes);
 app.use('/api/photos', photoRoutes);
 app.use('/api/places', placeRoutes);
+app.use('/api/login',placeRoutes);
 
 // test server
 app.get('/', (req,res)=>{
