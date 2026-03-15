@@ -18,8 +18,8 @@ app.use(cors({
 }));
 
 // 2. Middleware xử lý dữ liệu (Quan trọng: Đặt trước Routes)
-app.use(express.json());
-app.use(express.urlencoded({ extended: true })); // Thêm cái này để xử lý FormData/URL encoded
+app.use(express.json({ limit: "10mb" }));
+app.use(express.urlencoded({ extended: true, limit: "10mb" }));
 
 // 3. Sử dụng Routes
 app.use('/api/memories', memoryRoutes);
