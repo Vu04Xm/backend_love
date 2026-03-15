@@ -78,11 +78,11 @@ router.post('/', upload.array('images', 15), async (req, res) => {
         if (files && files.length > 0) {
             try {
                 const photoQueries = files.map(file => {
-                    return db.query(
-                        'INSERT INTO memory_photos (memory_id, photo_url, public_id) VALUES (?, ?, ?)', 
-                        [memoryId, file.path, file.filename]
-                    );
-                });
+    return db.query(
+        'INSERT INTO memory_photos (memory_id, photo_url, public_id) VALUES (?, ?, ?)', 
+        [memoryId, file.path, file.public_id]
+    );
+});
                 await Promise.all(photoQueries);
             } catch (photoErr) {
                 return res.status(207).json({ 
