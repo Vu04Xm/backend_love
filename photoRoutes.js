@@ -32,7 +32,7 @@ router.get('/', async (req, res) => {
 });
 
 // [CREATE]
-router.post('/', upload.single('image'), async (req, res) => {
+router.post('/', upload.single('images'), async (req, res) => {
   try {
     const { caption } = req.body;
     const image_url = req.file ? req.file.path : null;
