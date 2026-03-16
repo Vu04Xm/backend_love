@@ -172,5 +172,22 @@ router.use((err, req, res, next) => {
     }
     next(err);
 });
+// 6. [RANDOM] - Lấy 1 ảnh ngẫu nhiên cho hiệu ứng Trái tim rơi
+router.get('/random', async (req, res) => {
+    try {
+        // Lệnh SQL lấy 1 dòng ngẫu nhiên từ bảng ảnh
+        const sql = `SELECT photo_url FROM memory_photos ORDER BY RAND() LIMIT 1`;
+        const [rows] = await db.query(sql);
+
+        if (rows.length > 0) {
+            res.json({ image_url: rows[0].photo_url });
+        } else {
+            // Trường hợp DB chưa có ảnh nào
+            res.status(404).json({ error: "Kho ảnh đang trống" });
+        }
+    } catch (err) {
+        handleCatchError(res, err, "Lỗi khi lấy ảnh ngẫu nhiên");
+    }
+});
 
 module.exports = router;
